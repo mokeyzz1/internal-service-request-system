@@ -216,7 +216,7 @@ function RequestDetail({ request }: { request: ServiceRequest }) {
 
 export default function Home() {
   const [filters, setFilters] = useState(initialFilters);
-  const [activeId, setActiveId] = useState(serviceRequests[0].id);
+  const [activeId, setActiveId] = useState("");
   const [createdRequests, setCreatedRequests] = useState<ServiceRequest[]>([]);
   const [hasLoadedCreatedRequests, setHasLoadedCreatedRequests] = useState(false);
 
@@ -249,7 +249,7 @@ export default function Home() {
     });
   }, [filters, requests]);
 
-  const activeRequest = requests.find((request) => request.id === activeId) ?? filteredRequests[0] ?? requests[0];
+  const activeRequest = filteredRequests.find((request) => request.id === activeId) ?? filteredRequests[0] ?? requests[0];
 
   function updateFilter(key: keyof Filters, value: string) {
     setFilters((current) => ({ ...current, [key]: value }));
