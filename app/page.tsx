@@ -226,7 +226,7 @@ function RequestDetail({ request, onSave }: { request: ServiceRequest; onSave: (
     };
     onSave(request.id, nextEdits);
     setDraft(nextEdits as RequestEditableFields);
-    setSavedMessage("Saved locally");
+    setSavedMessage("Changes saved");
   }
 
   function markResolved() {
@@ -234,7 +234,7 @@ function RequestDetail({ request, onSave }: { request: ServiceRequest; onSave: (
       ...draft,
       status: "Resolved" as RequestStatus,
       resolutionDate: draft.resolutionDate ?? todayIsoDate(),
-      resolutionSummary: draft.resolutionSummary || "Request completed and documented by systems support."
+      resolutionSummary: draft.resolutionSummary || "Request resolved and documented by systems support."
     };
     saveDraft(resolvedDraft);
   }
@@ -249,7 +249,7 @@ function RequestDetail({ request, onSave }: { request: ServiceRequest; onSave: (
       </div>
 
       <div className="detail-section">
-        <h3>Requester-provided details</h3>
+        <h3>Request details</h3>
         <div className="detail-grid">
           <span>Requester<strong>{request.requester}</strong></span>
           <span>Department<strong>{request.department}</strong></span>
@@ -266,30 +266,30 @@ function RequestDetail({ request, onSave }: { request: ServiceRequest; onSave: (
 
       <div className="detail-section analyst-actions">
         <div className="section-title compact-title">
-          <h3>Analyst Actions</h3>
+          <h3>Support Review</h3>
           {savedMessage && <span>{savedMessage}</span>}
         </div>
         <div className="action-grid">
           <label className="field"><span>Status</span><select value={draft.status} onChange={(event) => updateDraft("status", event.target.value as RequestStatus)}>{statuses.map((value) => <option key={value}>{value}</option>)}</select></label>
-          <label className="field"><span>Assigned owner</span><select value={draft.assignedOwner} onChange={(event) => updateDraft("assignedOwner", event.target.value)}>{["Unassigned", ...owners].map((value) => <option key={value}>{value}</option>)}</select></label>
+          <label className="field"><span>Owner</span><select value={draft.assignedOwner} onChange={(event) => updateDraft("assignedOwner", event.target.value)}>{["Unassigned", ...owners].map((value) => <option key={value}>{value}</option>)}</select></label>
           <label className="field"><span>Priority</span><select value={draft.priority} onChange={(event) => updateDraft("priority", event.target.value as RequestPriority)}>{priorities.map((value) => <option key={value}>{value}</option>)}</select></label>
           <span className="read-only-field">Due date<strong>{request.dueDate}</strong></span>
         </div>
-        <label className="check-field compact-check"><input type="checkbox" checked={draft.approvalRequired} onChange={(event) => updateDraft("approvalRequired", event.target.checked)} /> Approval required</label>
-        <label className="field"><span>Internal notes</span><textarea value={draft.internalNotes} onChange={(event) => updateDraft("internalNotes", event.target.value)} rows={4} /></label>
+        <label className="check-field compact-check"><input type="checkbox" checked={draft.approvalRequired} onChange={(event) => updateDraft("approvalRequired", event.target.checked)} /> Approval needed before completion</label>
+        <label className="field"><span>Support notes</span><textarea value={draft.internalNotes} onChange={(event) => updateDraft("internalNotes", event.target.value)} rows={4} placeholder="Add triage notes, follow-up steps, blockers, or stakeholder updates." /></label>
       </div>
 
       <div className="detail-section analyst-actions">
-        <h3>Resolution and documentation</h3>
+        <h3>Resolution</h3>
         <div className="meta-list">
-          <span><CheckCircle2 size={16} /> Resolved: <strong>{draft.resolutionDate ?? "Pending"}</strong></span>
-          <span><ShieldCheck size={16} /> Control owner: <strong>Systems support analyst</strong></span>
+          <span><CheckCircle2 size={16} /> Resolution date: <strong>{draft.resolutionDate ?? "Pending"}</strong></span>
+          <span><ShieldCheck size={16} /> Update access: <strong>Support analyst</strong></span>
         </div>
-        <label className="field"><span>SOP / documentation link</span><input value={draft.documentationLink ?? ""} onChange={(event) => updateDraft("documentationLink", event.target.value || null)} placeholder="Example: /sops/access-change-role-review" /></label>
-        <label className="field"><span>Resolution summary</span><textarea value={draft.resolutionSummary ?? ""} onChange={(event) => updateDraft("resolutionSummary", event.target.value || null)} rows={4} placeholder="Enter what changed, who was notified, and any follow-up needed." /></label>
+        <label className="field"><span>Related SOP / documentation</span><input value={draft.documentationLink ?? ""} onChange={(event) => updateDraft("documentationLink", event.target.value || null)} placeholder="Example: /sops/access-change-role-review" /></label>
+        <label className="field"><span>Resolution notes</span><textarea value={draft.resolutionSummary ?? ""} onChange={(event) => updateDraft("resolutionSummary", event.target.value || null)} rows={4} placeholder="Summarize the fix, access change, stakeholder notification, or remaining follow-up." /></label>
         <div className="action-row">
-          <button className="primary-button" type="button" onClick={() => saveDraft()}><CheckCircle2 size={17} /> Save changes</button>
-          <button className="ghost-button" type="button" onClick={markResolved}><TicketCheck size={17} /> Mark resolved</button>
+          <button className="primary-button" type="button" onClick={() => saveDraft()}><CheckCircle2 size={17} /> Save updates</button>
+          <button className="ghost-button" type="button" onClick={markResolved}><TicketCheck size={17} /> Resolve request</button>
         </div>
       </div>
     </aside>
