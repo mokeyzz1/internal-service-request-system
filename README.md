@@ -4,6 +4,10 @@ A department technology support workspace for managing internal service requests
 
 This project was built as a portfolio-ready Business Systems Analyst / IT application support case study. It models the type of workflow a university or department support team could use to track access changes, reporting requests, onboarding work, software issues, system issues, and documentation updates.
 
+## Live Demo
+
+[Open the deployed app](https://internal-service-request-system.vercel.app)
+
 ## Screenshots
 
 ![Dashboard and request metrics](public/screenshots/dashboard.png)
