@@ -169,34 +169,47 @@ function RequestDetail({ request }: { request: ServiceRequest }) {
         <span className={`badge priority-${request.priority.toLowerCase()}`}>{request.priority}</span>
       </div>
 
-      <div className="detail-grid">
-        <span>Requester<strong>{request.requester}</strong></span>
-        <span>Department<strong>{request.department}</strong></span>
-        <span>Category<strong>{request.category}</strong></span>
-        <span>Status<strong>{request.status}</strong></span>
-        <span>Owner<strong>{request.assignedOwner}</strong></span>
-        <span>Submitted<strong>{request.submittedDate}</strong></span>
-        <span>Due<strong>{request.dueDate}</strong></span>
-        <span>Resolved<strong>{request.resolutionDate ?? "Pending"}</strong></span>
+      <div className="detail-section">
+        <h3>Requester-provided details</h3>
+        <div className="detail-grid">
+          <span>Requester<strong>{request.requester}</strong></span>
+          <span>Department<strong>{request.department}</strong></span>
+          <span>Category<strong>{request.category}</strong></span>
+          <span>Affected system<strong>{request.affectedSystem}</strong></span>
+          <span>Submitted<strong>{request.submittedDate}</strong></span>
+          <span>Priority requested<strong>{request.priority}</strong></span>
+        </div>
+        <div className="note-block compact-note">
+          <h3>Description</h3>
+          <p>{request.description}</p>
+        </div>
       </div>
 
-      <div className="note-block">
-        <h3>Description</h3>
-        <p>{request.description}</p>
-      </div>
-      <div className="note-block">
-        <h3>Internal Notes</h3>
-        <p>{request.internalNotes}</p>
-      </div>
-      <div className="note-block">
-        <h3>Resolution Summary</h3>
-        <p>{request.resolutionSummary ?? "Resolution has not been entered yet."}</p>
+      <div className="detail-section">
+        <h3>Systems support tracking</h3>
+        <div className="detail-grid">
+          <span>Status<strong>{request.status}</strong></span>
+          <span>Assigned owner<strong>{request.assignedOwner}</strong></span>
+          <span>Due date<strong>{request.dueDate}</strong></span>
+          <span>Approval required<strong>{request.approvalRequired ? "Yes" : "No"}</strong></span>
+        </div>
+        <div className="note-block compact-note">
+          <h3>Internal Notes</h3>
+          <p>{request.internalNotes}</p>
+        </div>
       </div>
 
-      <div className="meta-list">
-        <span><ShieldCheck size={16} /> Approval required: <strong>{request.approvalRequired ? "Yes" : "No"}</strong></span>
-        <span><SlidersHorizontal size={16} /> Affected system: <strong>{request.affectedSystem}</strong></span>
-        <span><BookOpen size={16} /> SOP: <strong>{request.documentationLink ?? "Not linked"}</strong></span>
+      <div className="detail-section">
+        <h3>Resolution and documentation</h3>
+        <div className="meta-list">
+          <span><CheckCircle2 size={16} /> Resolved: <strong>{request.resolutionDate ?? "Pending"}</strong></span>
+          <span><BookOpen size={16} /> SOP: <strong>{request.documentationLink ?? "Not linked"}</strong></span>
+          <span><ShieldCheck size={16} /> Control owner: <strong>Systems support analyst</strong></span>
+        </div>
+        <div className="note-block compact-note">
+          <h3>Resolution Summary</h3>
+          <p>{request.resolutionSummary ?? "Resolution has not been entered yet."}</p>
+        </div>
       </div>
     </aside>
   );
@@ -281,11 +294,28 @@ export default function Home() {
         </div>
         <nav aria-label="Page sections">
           <a href="#dashboard">Dashboard</a>
-          <a href="#queue">Request Queue</a>
-          <a href="#intake">Intake</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#queue">Support Workspace</a>
+          <a href="#intake">Requester Intake</a>
           <a href="#reporting">Reporting</a>
         </nav>
       </header>
+
+      <section className="workflow-overview" id="workflow">
+        <div className="workflow-copy">
+          <p>Demo operating model</p>
+          <h2>Department users submit requests. Systems support owns triage, status, documentation, and resolution.</h2>
+          <span>
+            The app is intentionally shown in one place for portfolio review: requesters use the intake form, while analysts use the queue and detail workspace to prioritize work, confirm approvals, assign ownership, document actions, and close requests.
+          </span>
+        </div>
+        <div className="workflow-steps" aria-label="Request lifecycle">
+          <span><UsersRound size={18} /> Requester Intake</span>
+          <span><SlidersHorizontal size={18} /> Triage & Assignment</span>
+          <span><ShieldCheck size={18} /> Approval Check</span>
+          <span><BookOpen size={18} /> Resolution & SOP</span>
+        </div>
+      </section>
 
       <section className="dashboard" id="dashboard">
         <StatCard label="Open requests" value={metrics.openRequests} helper="Submitted through Waiting" icon={TicketCheck} />
@@ -343,8 +373,8 @@ export default function Home() {
         <div className="queue-panel">
           <div className="section-title">
             <div>
-              <h2>Request Queue</h2>
-              <span>{filteredRequests.length} matching requests</span>
+              <h2>Systems Support Workspace</h2>
+              <span>{filteredRequests.length} matching requests · analysts control status, owner, notes, resolution, and SOP links</span>
             </div>
             <button className="ghost-button" onClick={() => setFilters(initialFilters)}><Filter size={16} /> Reset filters</button>
           </div>
@@ -384,8 +414,8 @@ export default function Home() {
         <form className="intake-form" id="intake" onSubmit={handleSubmit}>
           <div className="section-title">
             <div>
-              <h2>Intake Form</h2>
-              <span>Create a new request for triage · {createdRequests.length} saved locally</span>
+              <h2>Requester Intake</h2>
+              <span>For department users requesting access, reports, system help, or workflow changes · {createdRequests.length} saved locally</span>
             </div>
             <FilePlus2 aria-hidden="true" />
           </div>
@@ -399,9 +429,9 @@ export default function Home() {
             <label className="field"><span>Priority</span><select name="priority">{priorities.map((value) => <option key={value}>{value}</option>)}</select></label>
             <label className="field"><span>Affected system/tool</span><select name="system">{systems.map((value) => <option key={value}>{value}</option>)}</select></label>
           </div>
-          <label className="field"><span>Description</span><textarea name="description" required rows={4} placeholder="Describe the request, business impact, timing, approval notes, and any affected users." /></label>
+          <label className="field"><span>Business need</span><textarea name="description" required rows={4} placeholder="Describe what is needed, the affected users, timing, business impact, and any known approval details." /></label>
           <label className="check-field"><input name="approvalRequired" type="checkbox" /> Access approval is required</label>
-          <button className="primary-button" type="submit"><CheckCircle2 size={17} /> Submit request</button>
+          <button className="primary-button" type="submit"><CheckCircle2 size={17} /> Submit for systems support review</button>
         </form>
 
         <section className="report-panel" id="reporting">
