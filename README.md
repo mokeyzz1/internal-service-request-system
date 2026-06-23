@@ -1,52 +1,65 @@
 # Service Request Workspace
 
-A department technology support workflow demo for service intake, access changes, reporting requests, system issues, support notes, resolution tracking, and basic operational reporting.
+A department technology support workspace for managing internal service requests from intake through triage, analyst updates, resolution documentation, and operational reporting.
 
-The project is designed as a portfolio-ready Business Systems Analyst / application support demo. It shows how department users can submit requests and how a support analyst can review, update, document, and resolve those requests.
+This project was built as a portfolio-ready Business Systems Analyst / IT application support case study. It models the type of workflow a university or department support team could use to track access changes, reporting requests, onboarding work, software issues, system issues, and documentation updates.
 
 ## Screenshots
 
-![Support workspace](public/screenshots/dashboard.png)
+![Dashboard and request metrics](public/screenshots/dashboard.png)
 
 ![Requester intake and reporting](public/screenshots/reporting.png)
 
-## What The Demo Shows
+## Why This Project Exists
 
-- Requester intake for department users submitting access, reporting, software, system, onboarding, or documentation requests.
-- Systems support workspace with queue search, filters, selected request details, and analyst update controls.
-- Editable support review fields for status, owner, priority, approval requirement, support notes, SOP/documentation link, and resolution notes.
-- Save and resolve actions that persist locally in the browser.
-- Dashboard and reporting views for open work, approval needs, overdue requests, access changes, affected systems, and recurring issues.
+Internal support teams often receive requests through email, chat, spreadsheets, or informal handoffs. That makes it harder to see what is open, who owns the work, which requests need approval, where repeat issues are happening, and whether resolution notes are documented.
 
-## Workflow
+Service Request Workspace turns that process into a structured workflow:
 
-1. A department user submits a request through the requester intake form.
-2. The request appears in the support queue as `Submitted` and `Unassigned`.
-3. A support analyst reviews the request, updates status, assigns an owner, adjusts priority, confirms approval needs, and adds support notes.
-4. The analyst can link related SOP/documentation and add resolution notes.
-5. The request can be saved or resolved, and the changes persist after refresh.
-6. Reporting views summarize request volume, affected systems, department demand, and recurring issue patterns.
+- Department users submit requests through an intake form.
+- Support analysts triage requests from a searchable queue.
+- Analysts update status, owner, priority, approval needs, notes, SOP links, and resolution details.
+- Managers can review request volume, overdue work, access-change activity, affected systems, and recurring issue signals.
+
+## What To Test
+
+1. Open the dashboard and review open requests, overdue work, approval needs, access changes, and recurring issues.
+2. Use the Support Workspace filters to search by request, requester, affected system, status, priority, department, or owner.
+3. Select a request and update the support review fields in the detail panel.
+4. Save updates, refresh the page, and confirm the changes persist.
+5. Submit a new request through Requester Intake.
+6. Confirm the new request appears in the queue as `Submitted` and `Unassigned`.
+7. Use `Reset saved data` to clear locally saved test requests and analyst edits.
 
 ## Core Features
 
-- Dashboard cards for open requests, awaiting approval, overdue work, average resolution time, completed access changes, and recurring issues.
-- Request queue with search and filters for status, priority, category, department, and assignee.
-- Request detail panel with requester information, affected system, submitted date, due date, approval flag, support notes, SOP link, and resolution fields.
-- Editable support review controls for status, owner, priority, approval requirement, notes, documentation link, and resolution summary.
-- Requester intake form with required fields and local persistence.
-- Reporting view with request trends, category volume, department demand, top affected systems, and recurring issues.
+- Operational dashboard for open work, approval review, overdue requests, resolution time, access changes, and recurring issues.
+- Searchable support queue with filters for status, priority, category, department, and assignee.
+- Editable request detail panel for analyst-owned fields.
+- Requester intake form for access, reporting, system help, onboarding, software, and documentation requests.
+- Local persistence for submitted requests and saved analyst edits.
+- Reporting view for request trends, category volume, department demand, top affected systems, and recurring issues.
 - 120 realistic seed records across HR, Finance, Operations, Student Services, IT, and Athletics.
+
+## Business Analyst / IT Support Skills Shown
+
+- Requirements thinking for intake, triage, approvals, ownership, and resolution workflows.
+- Business process design for department technology support.
+- Application support concepts such as ticket status, due dates, escalation signals, affected systems, SOP links, and resolution notes.
+- Data validation through required intake fields and typed request records.
+- Operational reporting for workload, recurring issues, access changes, and service demand.
+- User acceptance testing flow through submit, edit, save, resolve, refresh, and reset behavior.
 
 ## Persistence Model
 
-This version uses browser `localStorage` for demo persistence:
+This version uses browser `localStorage` so the demo can be tested without a backend:
 
 - New intake submissions are saved in the current browser.
-- Analyst updates are saved in the current browser.
-- Refreshing the page keeps submitted requests and saved edits.
-- Data is not shared across users or devices.
+- Analyst edits are saved in the current browser.
+- Refreshing the page keeps submitted requests and saved updates.
+- `Reset saved data` clears local test records and restores the clean seed dataset.
 
-A production version would move persistence into a shared database and add authentication/roles for requesters, support analysts, and administrators.
+Data is not shared across users or devices. A production version would use database persistence, authentication, role-based access, and audit history.
 
 ## Data Model
 
@@ -73,27 +86,15 @@ Primary request fields include:
 - `affectedSystem`
 - `recurringIssueKey`
 
-## Business Systems Analyst / Application Support Mapping
-
-This project demonstrates common BSA and application support work:
-
-- Request intake and triage workflow design.
-- Status, owner, priority, and approval tracking.
-- Access-change and system-support request handling.
-- Internal notes and resolution documentation.
-- SOP/knowledge-base linking.
-- Queue filtering and operational visibility.
-- Reporting on department demand, affected systems, and recurring issues.
-
 ## Tech Stack
 
 - Next.js
-- TypeScript
 - React
+- TypeScript
 - Recharts
 - Lucide React
 - Prisma schema prepared for SQLite
-- Local typed seed data and browser persistence for demo use
+- Browser `localStorage` for demo persistence
 
 ## Run Locally
 
@@ -110,14 +111,14 @@ Build check:
 npm run build
 ```
 
-## Future Improvements
+## Future Production Improvements
 
-- Add authentication and role-based views for requesters and support analysts.
-- Move request storage from localStorage to Postgres/SQLite through Prisma.
-- Add request comments/activity history.
-- Add attachment support.
-- Add admin-managed categories, owners, and affected systems.
+- Add authentication and separate views for requesters, support analysts, and administrators.
+- Move storage from `localStorage` to Postgres or SQLite through Prisma.
+- Add activity history for status changes, owner changes, comments, and approvals.
+- Add attachments for screenshots, files, and approval evidence.
+- Add admin-managed request categories, owners, departments, and affected systems.
 
 ## Resume Bullet Draft
 
-- Built an internal service request system with requester intake, support queue filtering, analyst status/owner updates, approval tracking, support notes, resolution documentation, and operational reporting for department technology workflows.
+- Built a service request workspace for department technology support, including requester intake, searchable analyst queue, editable status/owner/priority controls, approval tracking, support notes, SOP links, resolution documentation, local persistence, and operational reporting across 120 seeded request records.
