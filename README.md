@@ -1,43 +1,58 @@
 # Internal Service Request System
 
-A lightweight internal operations system for tracking technology service requests, access changes, onboarding tasks, recurring issues, resolution notes, and reporting metrics across department users.
+An internal service request workflow demo for department technology support, access changes, reporting requests, system issues, support notes, resolution tracking, and basic operational reporting.
 
-## Problem Statement
-
-Internal support teams often manage requests across email, spreadsheets, chat, and disconnected ticket notes. That makes it harder to see open work, aging issues, approval needs, recurring system problems, handoff context, and reporting trends. This project centralizes the service request lifecycle in one simple application.
-
-## Objective
-
-Create a practical Business Systems Analyst / Application Support portfolio project that demonstrates request intake, triage workflows, access-change tracking, documentation links, resolution notes, recurring issue analysis, and operational reporting.
+The project is designed as a portfolio-ready Business Systems Analyst / application support demo. It shows how department users can submit requests and how a support analyst can review, update, document, and resolve those requests.
 
 ## Screenshots
 
-![Dashboard](public/screenshots/dashboard.png)
+![Support workspace](public/screenshots/dashboard.png)
 
-![Reporting view](public/screenshots/reporting.png)
+![Requester intake and reporting](public/screenshots/reporting.png)
 
-## User Workflow
+## What The Demo Shows
 
-1. A department user submits a request through the intake form with category, department, priority, affected system, description, and approval requirement.
-2. The support team reviews the queue and filters by status, priority, category, department, or assignee.
-3. A request owner opens the detail panel to review requester information, internal notes, due date, documentation link, affected system, and resolution fields.
-4. Requests move through the workflow: Submitted, Triaged, In Progress, Waiting, and Resolved.
-5. Leadership uses the dashboard and reporting view to monitor open work, aging requests, overdue work, resolution time, access changes, category volume, department volume, and recurring issues.
+- Requester intake for department users submitting access, reporting, software, system, onboarding, or documentation requests.
+- Systems support workspace with queue search, filters, selected request details, and analyst update controls.
+- Editable support review fields for status, owner, priority, approval requirement, support notes, SOP/documentation link, and resolution notes.
+- Save and resolve actions that persist locally in the browser.
+- Dashboard and reporting views for open work, approval needs, overdue requests, access changes, affected systems, and recurring issues.
+
+## Workflow
+
+1. A department user submits a request through the requester intake form.
+2. The request appears in the support queue as `Submitted` and `Unassigned`.
+3. A support analyst reviews the request, updates status, assigns an owner, adjusts priority, confirms approval needs, and adds support notes.
+4. The analyst can link related SOP/documentation and add resolution notes.
+5. The request can be saved or resolved, and the changes persist after refresh.
+6. Reporting views summarize request volume, affected systems, department demand, and recurring issue patterns.
 
 ## Core Features
 
-- Dashboard cards for open requests, aging requests, average resolution time, overdue requests, completed access changes, and recurring issues.
+- Dashboard cards for open requests, awaiting approval, overdue work, average resolution time, completed access changes, and recurring issues.
 - Request queue with search and filters for status, priority, category, department, and assignee.
-- Request detail panel with requester, department, category, priority, status, owner, submitted date, due date, resolution date, description, notes, resolution summary, SOP link, approval requirement, and affected system.
-- Intake form for creating a new submitted request in the local app state.
-- Reporting view with trend charts and recurring issue summaries.
+- Request detail panel with requester information, affected system, submitted date, due date, approval flag, support notes, SOP link, and resolution fields.
+- Editable support review controls for status, owner, priority, approval requirement, notes, documentation link, and resolution summary.
+- Requester intake form with required fields and local persistence.
+- Reporting view with request trends, category volume, department demand, top affected systems, and recurring issues.
 - 120 realistic seed records across HR, Finance, Operations, Student Services, IT, and Athletics.
+
+## Persistence Model
+
+This version uses browser `localStorage` for demo persistence:
+
+- New intake submissions are saved in the current browser.
+- Analyst updates are saved in the current browser.
+- Refreshing the page keeps submitted requests and saved edits.
+- Data is not shared across users or devices.
+
+A production version would move persistence into a shared database and add authentication/roles for requesters, support analysts, and administrators.
 
 ## Data Model
 
-The current app uses typed local seed data in `data/requests.ts`, shaped to map cleanly into the included Prisma model in `prisma/schema.prisma`.
+The app uses typed local seed data in `data/requests.ts`, with a Prisma schema prepared in `prisma/schema.prisma` for a future database-backed version.
 
-Primary request fields:
+Primary request fields include:
 
 - `id`
 - `title`
@@ -58,46 +73,27 @@ Primary request fields:
 - `affectedSystem`
 - `recurringIssueKey`
 
-Recommended database path:
-
-1. Copy `.env.example` to `.env`.
-2. Keep `DATABASE_URL="file:./dev.db"` for SQLite.
-3. Use the Prisma schema as the persistence layer when moving beyond seed data.
-
-## Dashboard and Reporting
-
-The dashboard calculates operational metrics from the request dataset:
-
-- Open requests: all requests not marked Resolved.
-- Aging requests: open requests older than 14 days.
-- Average resolution time: average days between submitted and resolved dates.
-- Access changes completed: resolved Access Change requests.
-- Overdue requests: open requests past due date.
-- Recurring issues: requests tagged with a repeat issue key.
-
-The reporting view highlights volume trends, resolved volume, average resolution days, category distribution, department distribution, and recurring system problems.
-
 ## Business Systems Analyst / Application Support Mapping
 
-This project demonstrates common BSA and application support responsibilities:
+This project demonstrates common BSA and application support work:
 
-- Request intake and triage design.
-- Workflow states and handoff visibility.
-- Access change tracking with approval flags.
-- System and tool impact analysis.
+- Request intake and triage workflow design.
+- Status, owner, priority, and approval tracking.
+- Access-change and system-support request handling.
 - Internal notes and resolution documentation.
-- SOP and knowledge-base linking.
-- Operational metrics for process improvement.
-- Identification of recurring incidents that may need root-cause analysis.
+- SOP/knowledge-base linking.
+- Queue filtering and operational visibility.
+- Reporting on department demand, affected systems, and recurring issues.
 
 ## Tech Stack
 
 - Next.js
 - TypeScript
+- React
 - Recharts
 - Lucide React
 - Prisma schema prepared for SQLite
-- Local typed seed data for fast portfolio/demo use
+- Local typed seed data and browser persistence for demo use
 
 ## Run Locally
 
@@ -114,8 +110,14 @@ Build check:
 npm run build
 ```
 
-## Resume Bullets
+## Future Improvements
 
-- Built an internal service request system for tracking technology requests, access changes, onboarding tasks, recurring issues, resolution notes, and reporting metrics across department users.
-- Designed request categories, priority levels, status workflows, approval fields, and documentation links to support triage, handoffs, and repeatable service delivery.
-- Created reporting views for open requests, aging issues, resolution trends, category volume, and recurring system problems to identify process improvement opportunities.
+- Add authentication and role-based views for requesters and support analysts.
+- Move request storage from localStorage to Postgres/SQLite through Prisma.
+- Add request comments/activity history.
+- Add attachment support.
+- Add admin-managed categories, owners, and affected systems.
+
+## Resume Bullet Draft
+
+- Built an internal service request system with requester intake, support queue filtering, analyst status/owner updates, approval tracking, support notes, resolution documentation, and operational reporting for department technology workflows.
