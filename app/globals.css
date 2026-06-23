@@ -11,11 +11,7 @@
   --red: #ef4444;
   --violet: #7c3aed;
   --cyan: #0891b2;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --shadow: 0 16px 42px rgba(28, 38, 62, 0.08);
-  --shadow-soft: 0 8px 24px rgba(28, 38, 62, 0.06);
+  --shadow: 0 14px 40px rgba(28, 38, 62, 0.08);
 }
 
 * {
@@ -56,7 +52,7 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: 18px clamp(24px, 5vw, 72px);
+  padding: 18px clamp(20px, 5vw, 64px);
   border-bottom: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(14px);
@@ -96,7 +92,7 @@ main {
   justify-content: center;
   gap: 8px;
   min-height: 38px;
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   border: 1px solid var(--line);
   padding: 8px 12px;
   text-decoration: none;
@@ -109,14 +105,14 @@ main {
 .analytics-strip,
 .workspace,
 .intake-report {
-  width: min(1500px, calc(100% - 48px));
-  margin: 28px auto;
+  width: min(1480px, calc(100% - 40px));
+  margin: 24px auto;
 }
 
 .dashboard {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .stat-card,
@@ -127,15 +123,15 @@ main {
 .report-panel {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   box-shadow: var(--shadow);
 }
 
 .stat-card {
   display: flex;
   justify-content: space-between;
-  min-height: 132px;
-  padding: 20px;
+  min-height: 136px;
+  padding: 18px;
   overflow: hidden;
 }
 
@@ -165,8 +161,8 @@ main {
 .analytics-strip,
 .intake-report {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(380px, 0.65fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.65fr);
+  gap: 18px;
 }
 
 .chart-panel,
@@ -174,7 +170,7 @@ main {
 .intake-form,
 .queue-panel,
 .detail-panel {
-  padding: 22px;
+  padding: 18px;
 }
 
 .section-title,
@@ -218,16 +214,16 @@ main {
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1.42fr) minmax(420px, 0.58fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.45fr) minmax(380px, 0.55fr);
+  gap: 18px;
   align-items: start;
 }
 
 .filters {
   display: grid;
   grid-template-columns: minmax(260px, 1.4fr) repeat(5, minmax(132px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
 .field,
@@ -252,10 +248,10 @@ select,
 textarea {
   width: 100%;
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   background: #fbfcfe;
   color: var(--text);
-  padding: 12px 13px;
+  padding: 11px 12px;
   outline: none;
 }
 
@@ -276,7 +272,7 @@ textarea:focus {
 
 .request-table {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .table-row {
@@ -285,17 +281,17 @@ textarea:focus {
   gap: 10px;
   align-items: center;
   width: 100%;
-  min-height: 62px;
+  min-height: 58px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
+  border-radius: 8px;
+  padding: 10px 12px;
   background: #ffffff;
   color: var(--text);
   text-align: left;
 }
 
 .table-head {
-  min-height: 42px;
+  min-height: 40px;
   background: var(--surface-strong);
   color: var(--muted);
   font-size: 12px;
@@ -304,9 +300,8 @@ textarea:focus {
 }
 
 .table-row.selected {
-  border-color: rgba(37, 99, 235, 0.55);
+  border-color: var(--blue);
   background: #eff6ff;
-  box-shadow: inset 4px 0 0 var(--blue), var(--shadow-soft);
 }
 
 .table-row strong,
@@ -356,7 +351,7 @@ textarea:focus {
 .detail-panel {
   position: sticky;
   top: 104px;
-  max-height: calc(100vh - 132px);
+  max-height: calc(100vh - 124px);
   overflow-y: auto;
 }
 
@@ -374,8 +369,8 @@ textarea:focus {
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .detail-grid span,
@@ -383,10 +378,10 @@ textarea:focus {
 .read-only-field {
   display: grid;
   gap: 4px;
-  min-height: 62px;
+  min-height: 58px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 12px;
+  border-radius: 8px;
+  padding: 10px;
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
@@ -442,8 +437,8 @@ textarea:focus {
 .action-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .read-only-field {
@@ -518,8 +513,8 @@ textarea:focus {
   gap: 8px;
   min-width: 0;
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 14px;
+  border-radius: 8px;
+  padding: 12px;
   background: #fbfcfe;
 }
 
@@ -574,7 +569,7 @@ textarea:focus {
   .analytics-strip,
   .workspace,
   .intake-report {
-    width: min(100% - 24px, 1500px);
+    width: min(100% - 24px, 1480px);
   }
 
   .dashboard,
