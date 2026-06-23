@@ -10,6 +10,7 @@ import {
   Filter,
   KeyRound,
   LineChart,
+  RotateCcw,
   Search,
   ShieldCheck,
   SlidersHorizontal,
@@ -361,6 +362,15 @@ export default function Home() {
     }));
   }
 
+  function handleResetSavedData() {
+    window.localStorage.removeItem(createdRequestsStorageKey);
+    window.localStorage.removeItem(requestEditsStorageKey);
+    setCreatedRequests([]);
+    setRequestEdits({});
+    setFilters(initialFilters);
+    setActiveId("");
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -402,6 +412,7 @@ export default function Home() {
           <a href="#queue">Support Workspace</a>
           <a href="#intake">Requester Intake</a>
           <a href="#reporting">Reporting</a>
+          <button className="ghost-button" type="button" onClick={handleResetSavedData}><RotateCcw size={16} /> Reset saved data</button>
         </nav>
       </header>
 
