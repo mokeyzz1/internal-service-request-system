@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ServiceRequest {
+  id                 String   @id
+  title              String
+  requester          String
+  department         String
+  category           String
+  priority           String
+  status             String
+  assignedOwner      String
+  submittedDate      DateTime
+  dueDate            DateTime
+  resolutionDate     DateTime?
+  description        String
+  internalNotes      String
+  resolutionSummary  String?
+  documentationLink  String?
+  approvalRequired   Boolean
+  affectedSystem     String
+  recurringIssueKey  String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
