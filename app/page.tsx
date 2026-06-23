@@ -48,6 +48,7 @@ const owners = ["Maya Chen", "Jordan Price", "Avery Brooks", "Sam Rivera", "Nina
 const systems = ["Workday", "Banner", "Salesforce", "Tableau", "Microsoft 365", "Okta", "ServiceNow", "PeopleSoft", "Slack", "Power BI"];
 const colors = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#7c3aed", "#0891b2"];
 const createdRequestsStorageKey = "internal-service-request-system.createdRequests";
+const requestEditsStorageKey = "internal-service-request-system.requestEdits";
 
 type Filters = {
   search: string;
@@ -57,6 +58,13 @@ type Filters = {
   department: string;
   assignee: string;
 };
+
+type RequestEditableFields = Pick<
+  ServiceRequest,
+  "status" | "assignedOwner" | "priority" | "approvalRequired" | "internalNotes" | "resolutionSummary" | "documentationLink" | "resolutionDate"
+>;
+
+type RequestEdits = Record<string, Partial<RequestEditableFields>>;
 
 const initialFilters: Filters = {
   search: "",
@@ -142,6 +150,28 @@ function readCreatedRequests() {
   }
 }
 
+function readRequestEdits() {
+  if (typeof window === "undefined") return {};
+
+  try {
+    const stored = window.localStorage.getItem(requestEditsStorageKey);
+    if (!stored) return {};
+
+    const parsed = JSON.parse(stored);
+    if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") return {};
+
+    return Object.fromEntries(
+      Object.entries(parsed).filter(([id, edits]) => id.startsWith("ISR-") && edits && typeof edits === "object")
+    ) as RequestEdits;
+  } catch {
+    return {};
+  }
+}
+
+function todayIsoDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
 function nextRequestId(requests: ServiceRequest[]) {
   const maxId = requests.reduce((max, request) => {
     const match = request.id.match(/^ISR-(\d+)$/);
@@ -157,7 +187,57 @@ function offsetDate(date: Date, days: number) {
   return nextDate.toISOString().slice(0, 10);
 }
 
-function RequestDetail({ request }: { request: ServiceRequest }) {
+function RequestDetail({ request, onSave }: { request: ServiceRequest; onSave: (requestId: string, edits: Partial<RequestEditableFields>) => void }) {
+  const [draft, setDraft] = useState<RequestEditableFields>({
+    status: request.status,
+    assignedOwner: request.assignedOwner,
+    priority: request.priority,
+    approvalRequired: request.approvalRequired,
+    internalNotes: request.internalNotes,
+    resolutionSummary: request.resolutionSummary,
+    documentationLink: request.documentationLink,
+    resolutionDate: request.resolutionDate
+  });
+  const [savedMessage, setSavedMessage] = useState("");
+
+  useEffect(() => {
+    setDraft({
+      status: request.status,
+      assignedOwner: request.assignedOwner,
+      priority: request.priority,
+      approvalRequired: request.approvalRequired,
+      internalNotes: request.internalNotes,
+      resolutionSummary: request.resolutionSummary,
+      documentationLink: request.documentationLink,
+      resolutionDate: request.resolutionDate
+    });
+    setSavedMessage("");
+  }, [request.id]);
+
+  function updateDraft<K extends keyof RequestEditableFields>(key: K, value: RequestEditableFields[K]) {
+    setDraft((current) => ({ ...current, [key]: value }));
+    setSavedMessage("");
+  }
+
+  function saveDraft(edits = draft) {
+    const nextEdits = {
+      ...edits,
+      resolutionDate: edits.status === "Resolved" ? edits.resolutionDate ?? todayIsoDate() : edits.resolutionDate
+    };
+    onSave(request.id, nextEdits);
+    setDraft(nextEdits as RequestEditableFields);
+    setSavedMessage("Saved locally");
+  }
+
+  function markResolved() {
+    const resolvedDraft = {
+      ...draft,
+      status: "Resolved" as RequestStatus,
+      resolutionDate: draft.resolutionDate ?? todayIsoDate(),
+      resolutionSummary: draft.resolutionSummary || "Request completed and documented by systems support."
+    };
+    saveDraft(resolvedDraft);
+  }
   return (
     <aside className="detail-panel" id="request-detail">
       <div className="detail-head">
@@ -165,7 +245,7 @@ function RequestDetail({ request }: { request: ServiceRequest }) {
           <p>{request.id}</p>
           <h2>{request.title}</h2>
         </div>
-        <span className={`badge priority-${request.priority.toLowerCase()}`}>{request.priority}</span>
+        <span className={`badge priority-${draft.priority.toLowerCase()}`}>{draft.priority}</span>
       </div>
 
       <div className="detail-section">
@@ -176,7 +256,7 @@ function RequestDetail({ request }: { request: ServiceRequest }) {
           <span>Category<strong>{request.category}</strong></span>
           <span>Affected system<strong>{request.affectedSystem}</strong></span>
           <span>Submitted<strong>{request.submittedDate}</strong></span>
-          <span>Priority requested<strong>{request.priority}</strong></span>
+          <span>Priority<strong>{draft.priority}</strong></span>
         </div>
         <div className="note-block compact-note">
           <h3>Description</h3>
@@ -184,30 +264,32 @@ function RequestDetail({ request }: { request: ServiceRequest }) {
         </div>
       </div>
 
-      <div className="detail-section">
-        <h3>Systems support tracking</h3>
-        <div className="detail-grid">
-          <span>Status<strong>{request.status}</strong></span>
-          <span>Assigned owner<strong>{request.assignedOwner}</strong></span>
-          <span>Due date<strong>{request.dueDate}</strong></span>
-          <span>Approval required<strong>{request.approvalRequired ? "Yes" : "No"}</strong></span>
+      <div className="detail-section analyst-actions">
+        <div className="section-title compact-title">
+          <h3>Analyst Actions</h3>
+          {savedMessage && <span>{savedMessage}</span>}
         </div>
-        <div className="note-block compact-note">
-          <h3>Internal Notes</h3>
-          <p>{request.internalNotes}</p>
+        <div className="action-grid">
+          <label className="field"><span>Status</span><select value={draft.status} onChange={(event) => updateDraft("status", event.target.value as RequestStatus)}>{statuses.map((value) => <option key={value}>{value}</option>)}</select></label>
+          <label className="field"><span>Assigned owner</span><select value={draft.assignedOwner} onChange={(event) => updateDraft("assignedOwner", event.target.value)}>{["Unassigned", ...owners].map((value) => <option key={value}>{value}</option>)}</select></label>
+          <label className="field"><span>Priority</span><select value={draft.priority} onChange={(event) => updateDraft("priority", event.target.value as RequestPriority)}>{priorities.map((value) => <option key={value}>{value}</option>)}</select></label>
+          <span className="read-only-field">Due date<strong>{request.dueDate}</strong></span>
         </div>
+        <label className="check-field compact-check"><input type="checkbox" checked={draft.approvalRequired} onChange={(event) => updateDraft("approvalRequired", event.target.checked)} /> Approval required</label>
+        <label className="field"><span>Internal notes</span><textarea value={draft.internalNotes} onChange={(event) => updateDraft("internalNotes", event.target.value)} rows={4} /></label>
       </div>
 
-      <div className="detail-section">
+      <div className="detail-section analyst-actions">
         <h3>Resolution and documentation</h3>
         <div className="meta-list">
-          <span><CheckCircle2 size={16} /> Resolved: <strong>{request.resolutionDate ?? "Pending"}</strong></span>
-          <span><BookOpen size={16} /> SOP: <strong>{request.documentationLink ?? "Not linked"}</strong></span>
+          <span><CheckCircle2 size={16} /> Resolved: <strong>{draft.resolutionDate ?? "Pending"}</strong></span>
           <span><ShieldCheck size={16} /> Control owner: <strong>Systems support analyst</strong></span>
         </div>
-        <div className="note-block compact-note">
-          <h3>Resolution Summary</h3>
-          <p>{request.resolutionSummary ?? "Resolution has not been entered yet."}</p>
+        <label className="field"><span>SOP / documentation link</span><input value={draft.documentationLink ?? ""} onChange={(event) => updateDraft("documentationLink", event.target.value || null)} placeholder="Example: /sops/access-change-role-review" /></label>
+        <label className="field"><span>Resolution summary</span><textarea value={draft.resolutionSummary ?? ""} onChange={(event) => updateDraft("resolutionSummary", event.target.value || null)} rows={4} placeholder="Enter what changed, who was notified, and any follow-up needed." /></label>
+        <div className="action-row">
+          <button className="primary-button" type="button" onClick={() => saveDraft()}><CheckCircle2 size={17} /> Save changes</button>
+          <button className="ghost-button" type="button" onClick={markResolved}><TicketCheck size={17} /> Mark resolved</button>
         </div>
       </div>
     </aside>
@@ -218,7 +300,9 @@ export default function Home() {
   const [filters, setFilters] = useState(initialFilters);
   const [activeId, setActiveId] = useState("");
   const [createdRequests, setCreatedRequests] = useState<ServiceRequest[]>([]);
+  const [requestEdits, setRequestEdits] = useState<RequestEdits>({});
   const [hasLoadedCreatedRequests, setHasLoadedCreatedRequests] = useState(false);
+  const [hasLoadedRequestEdits, setHasLoadedRequestEdits] = useState(false);
 
   useEffect(() => {
     setCreatedRequests(readCreatedRequests());
@@ -226,11 +310,23 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    setRequestEdits(readRequestEdits());
+    setHasLoadedRequestEdits(true);
+  }, []);
+
+  useEffect(() => {
     if (!hasLoadedCreatedRequests) return;
     window.localStorage.setItem(createdRequestsStorageKey, JSON.stringify(createdRequests));
   }, [createdRequests, hasLoadedCreatedRequests]);
 
-  const requests = useMemo(() => [...createdRequests, ...serviceRequests], [createdRequests]);
+  useEffect(() => {
+    if (!hasLoadedRequestEdits) return;
+    window.localStorage.setItem(requestEditsStorageKey, JSON.stringify(requestEdits));
+  }, [requestEdits, hasLoadedRequestEdits]);
+
+  const requests = useMemo(() => {
+    return [...createdRequests, ...serviceRequests].map((request) => ({ ...request, ...(requestEdits[request.id] ?? {}) }));
+  }, [createdRequests, requestEdits]);
   const metrics = dashboardMetrics(requests);
   const rows = chartRows(requests);
   const recurring = topRecurringIssues(requests);
@@ -253,6 +349,16 @@ export default function Home() {
 
   function updateFilter(key: keyof Filters, value: string) {
     setFilters((current) => ({ ...current, [key]: value }));
+  }
+
+  function handleSaveRequest(requestId: string, edits: Partial<RequestEditableFields>) {
+    setRequestEdits((current) => ({
+      ...current,
+      [requestId]: {
+        ...(current[requestId] ?? {}),
+        ...edits
+      }
+    }));
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -389,7 +495,7 @@ export default function Home() {
           </div>
         </div>
 
-        <RequestDetail request={activeRequest} />
+        <RequestDetail request={activeRequest} onSave={handleSaveRequest} />
       </section>
 
       <section className="intake-report">

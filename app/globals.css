@@ -351,6 +351,8 @@ textarea:focus {
 .detail-panel {
   position: sticky;
   top: 104px;
+  max-height: calc(100vh - 124px);
+  overflow-y: auto;
 }
 
 .detail-section {
@@ -372,7 +374,8 @@ textarea:focus {
 }
 
 .detail-grid span,
-.meta-list span {
+.meta-list span,
+.read-only-field {
   display: grid;
   gap: 4px;
   min-height: 58px;
@@ -385,7 +388,8 @@ textarea:focus {
 }
 
 .detail-grid strong,
-.meta-list strong {
+.meta-list strong,
+.read-only-field strong {
   color: var(--text);
   font-size: 14px;
 }
@@ -420,6 +424,46 @@ textarea:focus {
   display: flex;
   align-items: center;
   min-height: auto;
+}
+
+.compact-title {
+  margin-bottom: 10px;
+}
+
+.compact-title h3 {
+  margin: 0;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.read-only-field {
+  display: grid;
+  gap: 4px;
+}
+
+.compact-check {
+  margin: 8px 0 12px;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.action-row .primary-button,
+.action-row .ghost-button {
+  flex: 1 1 160px;
+}
+
+.analyst-actions .field + .field {
+  margin-top: 10px;
 }
 
 .form-grid {
@@ -533,7 +577,8 @@ textarea:focus {
   .filters,
   .form-grid,
   .form-grid.four,
-  .detail-grid {
+  .detail-grid,
+  .action-grid {
     grid-template-columns: 1fr;
   }
 
