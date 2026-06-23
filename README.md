@@ -118,7 +118,3 @@ npm run build
 - Add activity history for status changes, owner changes, comments, and approvals.
 - Add attachments for screenshots, files, and approval evidence.
 - Add admin-managed request categories, owners, departments, and affected systems.
-
-## Resume Bullet Draft
-
-- Built a service request workspace for department technology support, including requester intake, searchable analyst queue, editable status/owner/priority controls, approval tracking, support notes, SOP links, resolution documentation, local persistence, and operational reporting across 120 seeded request records.
