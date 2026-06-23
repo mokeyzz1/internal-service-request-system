@@ -303,10 +303,10 @@ export default function Home() {
 
       <section className="workflow-overview" id="workflow">
         <div className="workflow-copy">
-          <p>Demo operating model</p>
-          <h2>Department users submit requests. Systems support owns triage, status, documentation, and resolution.</h2>
+          <p>Service request workflow</p>
+          <h2>Centralized intake for department service requests and systems support follow-up.</h2>
           <span>
-            The app is intentionally shown in one place for portfolio review: requesters use the intake form, while analysts use the queue and detail workspace to prioritize work, confirm approvals, assign ownership, document actions, and close requests.
+            Department staff submit access, reporting, software, and workflow requests through intake. Systems support reviews each request, assigns ownership, confirms approvals, documents actions, and tracks resolution.
           </span>
         </div>
         <div className="workflow-steps" aria-label="Request lifecycle">
