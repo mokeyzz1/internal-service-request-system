@@ -45,14 +45,25 @@ export function dashboardMetrics(requests = serviceRequests) {
   const accessChanges = resolved.filter((request) => request.category === "Access Change").length;
   const recurringIssues = requests.filter((request) => request.recurringIssueKey).length;
   const resolutionTimes = resolved.map(getResolutionDays).filter((days): days is number => days !== null);
+  const openAges = open.map(getAgingDays);
+  const slaRisk = open.filter((request) => {
+    const daysUntilDue = daysBetween(today.toISOString().slice(0, 10), request.dueDate);
+    return isOverdue(request) || daysUntilDue <= 2;
+  });
+  const awaitingApproval = open.filter((request) => request.approvalRequired);
+  const highPriorityOpen = open.filter((request) => request.priority === "High" || request.priority === "Urgent");
 
   return {
     openRequests: open.length,
     agingRequests: aging.length,
     averageResolutionTime: average(resolutionTimes),
+    averageOpenAge: average(openAges),
     accessChangesCompleted: accessChanges,
     recurringIssues,
-    overdueRequests: requests.filter(isOverdue).length
+    overdueRequests: requests.filter(isOverdue).length,
+    slaRisk: slaRisk.length,
+    awaitingApproval: awaitingApproval.length,
+    highPriorityOpen: highPriorityOpen.length
   };
 }
 
@@ -60,9 +71,23 @@ export function chartRows(requests = serviceRequests) {
   const categories = countBy(requests.map((request) => request.category));
   const departments = countBy(requests.map((request) => request.department));
   const status = countBy(requests.map((request) => request.status));
+  const priority = countBy(requests.map((request) => request.priority));
+  const systems = countBy(requests.map((request) => request.affectedSystem));
   const categoryRows = Object.entries(categories).map(([name, value]) => ({ name, value }));
   const departmentRows = Object.entries(departments).map(([name, value]) => ({ name, value }));
   const statusRows = Object.entries(status).map(([name, value]) => ({ name, value }));
+  const priorityRows = Object.entries(priority).map(([name, value]) => ({ name, value }));
+  const topSystemRows = Object.entries(systems)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
+  const categoryAgeRows = Object.entries(categories).map(([name]) => {
+    const matchingRequests = requests.filter((request) => request.category === name && isOpen(request));
+    return {
+      name,
+      value: Number(average(matchingRequests.map(getAgingDays)).toFixed(1))
+    };
+  });
   const trendRows = ["Mar", "Apr", "May", "Jun"].map((month, index) => ({
     month,
     volume: 22 + index * 7 + (index % 2) * 5,
@@ -70,7 +95,7 @@ export function chartRows(requests = serviceRequests) {
     averageDays: 8.6 - index * 0.7
   }));
 
-  return { categoryRows, departmentRows, statusRows, trendRows };
+  return { categoryRows, departmentRows, statusRows, priorityRows, topSystemRows, categoryAgeRows, trendRows };
 }
 
 export function topRecurringIssues(requests = serviceRequests) {

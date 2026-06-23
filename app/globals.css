@@ -457,23 +457,41 @@ textarea:focus {
   min-width: 0;
 }
 
-.recurring-list {
+.operations-grid {
   display: grid;
-  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
   margin-top: 14px;
 }
 
-.recurring-list div {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+.operations-grid section {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 12px;
+  background: #fbfcfe;
 }
 
-.recurring-list span {
+.operations-grid h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  font-size: 13px;
+}
+
+.metric-row span {
   color: var(--muted);
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 @media (max-width: 1200px) {
@@ -511,6 +529,7 @@ textarea:focus {
   }
 
   .dashboard,
+  .operations-grid,
   .filters,
   .form-grid,
   .form-grid.four,

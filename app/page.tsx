@@ -301,10 +301,10 @@ export default function Home() {
 
       <section className="dashboard" id="dashboard">
         <StatCard label="Open requests" value={metrics.openRequests} helper="Submitted through Waiting" icon={TicketCheck} />
-        <StatCard label="Aging requests" value={metrics.agingRequests} helper="Open for 14+ days" icon={Clock3} tone="amber" />
-        <StatCard label="Avg resolution" value={`${metrics.averageResolutionTime.toFixed(1)} days`} helper="Resolved request cycle time" icon={LineChart} tone="green" />
-        <StatCard label="Access changes" value={metrics.accessChangesCompleted} helper="Completed access requests" icon={KeyRound} tone="blue" />
-        <StatCard label="Overdue" value={metrics.overdueRequests} helper="Past due and still open" icon={AlertCircle} tone="red" />
+        <StatCard label="SLA risk" value={metrics.slaRisk} helper="Due soon or already overdue" icon={AlertCircle} tone="red" />
+        <StatCard label="Awaiting approval" value={metrics.awaitingApproval} helper="Open requests requiring review" icon={ShieldCheck} tone="amber" />
+        <StatCard label="High priority open" value={metrics.highPriorityOpen} helper="High and urgent unresolved work" icon={KeyRound} tone="blue" />
+        <StatCard label="Avg age open" value={`${metrics.averageOpenAge.toFixed(1)} days`} helper="Current unresolved request age" icon={Clock3} tone="green" />
         <StatCard label="Recurring issues" value={metrics.recurringIssues} helper="Tagged repeat incidents" icon={BarChart3} tone="amber" />
       </section>
 
@@ -419,8 +419,8 @@ export default function Home() {
         <section className="report-panel" id="reporting">
           <div className="section-title">
             <div>
-              <h2>Reporting View</h2>
-              <span>Volume, resolution time, and repeat problem signals</span>
+              <h2>Operational Reporting</h2>
+              <span>Demand, approval workload, aging, and repeat problem signals</span>
             </div>
           </div>
           <ResponsiveContainer width="100%" height={220}>
@@ -434,13 +434,46 @@ export default function Home() {
               <Line type="monotone" dataKey="averageDays" stroke="#f59e0b" strokeWidth={3} />
             </ReLineChart>
           </ResponsiveContainer>
-          <div className="recurring-list">
-            {recurring.map((issue) => (
-              <div key={issue.name}>
-                <strong>{issue.name}</strong>
-                <span>{issue.count} related requests</span>
-              </div>
-            ))}
+          <div className="operations-grid">
+            <section>
+              <h3>Top Affected Systems</h3>
+              {rows.topSystemRows.map((system) => (
+                <div key={system.name} className="metric-row">
+                  <strong>{system.name}</strong>
+                  <span>{system.value} requests</span>
+                </div>
+              ))}
+            </section>
+
+            <section>
+              <h3>Average Age by Category</h3>
+              {rows.categoryAgeRows.map((category) => (
+                <div key={category.name} className="metric-row">
+                  <strong>{category.name}</strong>
+                  <span>{category.value.toFixed(1)} days</span>
+                </div>
+              ))}
+            </section>
+
+            <section>
+              <h3>Priority Mix</h3>
+              {rows.priorityRows.map((priority) => (
+                <div key={priority.name} className="metric-row">
+                  <strong>{priority.name}</strong>
+                  <span>{priority.value} requests</span>
+                </div>
+              ))}
+            </section>
+
+            <section>
+              <h3>Recurring Issues</h3>
+              {recurring.map((issue) => (
+                <div key={issue.name} className="metric-row">
+                  <strong>{issue.name}</strong>
+                  <span>{issue.count} related</span>
+                </div>
+              ))}
+            </section>
           </div>
         </section>
       </section>
