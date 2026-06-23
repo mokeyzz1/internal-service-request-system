@@ -394,8 +394,8 @@ export default function Home() {
     <main>
       <header className="topbar">
         <div>
-          <p>Business Systems Operations</p>
-          <h1>Internal Service Request System</h1>
+          <p>Department Technology Support</p>
+          <h1>Service Request Workspace</h1>
         </div>
         <nav aria-label="Page sections">
           <a href="#dashboard">Dashboard</a>

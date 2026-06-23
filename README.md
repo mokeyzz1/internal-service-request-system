@@ -1,6 +1,6 @@
-# Internal Service Request System
+# Service Request Workspace
 
-An internal service request workflow demo for department technology support, access changes, reporting requests, system issues, support notes, resolution tracking, and basic operational reporting.
+A department technology support workflow demo for service intake, access changes, reporting requests, system issues, support notes, resolution tracking, and basic operational reporting.
 
 The project is designed as a portfolio-ready Business Systems Analyst / application support demo. It shows how department users can submit requests and how a support analyst can review, update, document, and resolve those requests.
 
