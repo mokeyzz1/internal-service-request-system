@@ -30,7 +30,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { serviceRequests } from "@/data/requests";
 import { Department, RequestCategory, RequestPriority, RequestStatus, ServiceRequest } from "@/lib/types";
 import {
@@ -48,6 +48,7 @@ const priorities: RequestPriority[] = ["Low", "Medium", "High", "Urgent"];
 const owners = ["Maya Chen", "Jordan Price", "Avery Brooks", "Sam Rivera", "Nina Patel", "Marcus Green"];
 const systems = ["Workday", "Banner", "Salesforce", "Tableau", "Microsoft 365", "Okta", "ServiceNow", "PeopleSoft", "Slack", "Power BI"];
 const colors = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#7c3aed", "#0891b2"];
+const createdRequestsStorageKey = "internal-service-request-system.createdRequests";
 
 type Filters = {
   search: string;
@@ -115,6 +116,48 @@ function SelectControl({
   );
 }
 
+function readCreatedRequests() {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const stored = window.localStorage.getItem(createdRequestsStorageKey);
+    if (!stored) return [];
+
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter((request): request is ServiceRequest => {
+      return (
+        request &&
+        typeof request.id === "string" &&
+        typeof request.title === "string" &&
+        typeof request.requester === "string" &&
+        departments.includes(request.department) &&
+        categories.includes(request.category) &&
+        priorities.includes(request.priority) &&
+        statuses.includes(request.status)
+      );
+    });
+  } catch {
+    return [];
+  }
+}
+
+function nextRequestId(requests: ServiceRequest[]) {
+  const maxId = requests.reduce((max, request) => {
+    const match = request.id.match(/^ISR-(\d+)$/);
+    return match ? Math.max(max, Number(match[1])) : max;
+  }, 2000);
+
+  return `ISR-${String(maxId + 1).padStart(4, "0")}`;
+}
+
+function offsetDate(date: Date, days: number) {
+  const nextDate = new Date(date);
+  nextDate.setDate(nextDate.getDate() + days);
+  return nextDate.toISOString().slice(0, 10);
+}
+
 function RequestDetail({ request }: { request: ServiceRequest }) {
   return (
     <aside className="detail-panel" id="request-detail">
@@ -163,6 +206,17 @@ export default function Home() {
   const [filters, setFilters] = useState(initialFilters);
   const [activeId, setActiveId] = useState(serviceRequests[0].id);
   const [createdRequests, setCreatedRequests] = useState<ServiceRequest[]>([]);
+  const [hasLoadedCreatedRequests, setHasLoadedCreatedRequests] = useState(false);
+
+  useEffect(() => {
+    setCreatedRequests(readCreatedRequests());
+    setHasLoadedCreatedRequests(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedCreatedRequests) return;
+    window.localStorage.setItem(createdRequestsStorageKey, JSON.stringify(createdRequests));
+  }, [createdRequests, hasLoadedCreatedRequests]);
 
   const requests = useMemo(() => [...createdRequests, ...serviceRequests], [createdRequests]);
   const metrics = dashboardMetrics(requests);
@@ -192,8 +246,9 @@ export default function Home() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const submittedDate = new Date();
     const newRequest: ServiceRequest = {
-      id: `ISR-${String(2000 + createdRequests.length + 1)}`,
+      id: nextRequestId(createdRequests),
       title: String(form.get("title")),
       requester: String(form.get("requester")),
       department: form.get("department") as Department,
@@ -201,8 +256,8 @@ export default function Home() {
       priority: form.get("priority") as RequestPriority,
       status: "Submitted",
       assignedOwner: "Unassigned",
-      submittedDate: "2026-06-22",
-      dueDate: "2026-06-29",
+      submittedDate: offsetDate(submittedDate, 0),
+      dueDate: offsetDate(submittedDate, 7),
       resolutionDate: null,
       description: String(form.get("description")),
       internalNotes: "New intake submitted from operations form. Awaiting triage owner review.",
@@ -330,7 +385,7 @@ export default function Home() {
           <div className="section-title">
             <div>
               <h2>Intake Form</h2>
-              <span>Create a new request for triage</span>
+              <span>Create a new request for triage · {createdRequests.length} saved locally</span>
             </div>
             <FilePlus2 aria-hidden="true" />
           </div>
