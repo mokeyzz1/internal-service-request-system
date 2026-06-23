@@ -14,7 +14,6 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   TicketCheck,
-  UsersRound
 } from "lucide-react";
 import {
   Bar,
@@ -294,28 +293,11 @@ export default function Home() {
         </div>
         <nav aria-label="Page sections">
           <a href="#dashboard">Dashboard</a>
-          <a href="#workflow">Workflow</a>
           <a href="#queue">Support Workspace</a>
           <a href="#intake">Requester Intake</a>
           <a href="#reporting">Reporting</a>
         </nav>
       </header>
-
-      <section className="workflow-overview" id="workflow">
-        <div className="workflow-copy">
-          <p>Service request workflow</p>
-          <h2>Centralized intake for department service requests and systems support follow-up.</h2>
-          <span>
-            Department staff submit access, reporting, software, and workflow requests through intake. Systems support reviews each request, assigns ownership, confirms approvals, documents actions, and tracks resolution.
-          </span>
-        </div>
-        <div className="workflow-steps" aria-label="Request lifecycle">
-          <span><UsersRound size={18} /> Requester Intake</span>
-          <span><SlidersHorizontal size={18} /> Triage & Assignment</span>
-          <span><ShieldCheck size={18} /> Approval Check</span>
-          <span><BookOpen size={18} /> Resolution & SOP</span>
-        </div>
-      </section>
 
       <section className="dashboard" id="dashboard">
         <StatCard label="Open requests" value={metrics.openRequests} helper="Submitted through Waiting" icon={TicketCheck} />
