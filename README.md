@@ -67,7 +67,7 @@ Data is not shared across users or devices. A production version would use datab
 
 ## Data Model
 
-The app uses typed local seed data in `data/requests.ts`, with a Prisma schema prepared in `prisma/schema.prisma` for a future database-backed version.
+The app uses typed local seed data in `data/requests.ts`.
 
 Primary request fields include:
 
@@ -97,7 +97,6 @@ Primary request fields include:
 - TypeScript
 - Recharts
 - Lucide React
-- Prisma schema prepared for SQLite
 - Browser `localStorage` for demo persistence
 
 ## Run Locally
@@ -118,7 +117,7 @@ npm run build
 ## Future Production Improvements
 
 - Add authentication and separate views for requesters, support analysts, and administrators.
-- Move storage from `localStorage` to Postgres or SQLite through Prisma.
+- Move storage from `localStorage` to a shared database.
 - Add activity history for status changes, owner changes, comments, and approvals.
 - Add attachments for screenshots, files, and approval evidence.
 - Add admin-managed request categories, owners, departments, and affected systems.
